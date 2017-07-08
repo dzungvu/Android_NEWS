@@ -1,13 +1,12 @@
 package com.software.dzungvu.jzunews;
 
-import android.app.Dialog;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DialogTitle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -16,25 +15,15 @@ import com.software.dzungvu.adapter.ElementsAdapter;
 import com.software.dzungvu.configuration.Configuration;
 import com.software.dzungvu.model.NewsElements;
 
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.annotation.ElementType;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 public class NewsPage extends AppCompatActivity {
 
@@ -77,7 +66,6 @@ public class NewsPage extends AppCompatActivity {
 
     private void addEvents() {
 
-
     }
 
     public class GetRssFile extends AsyncTask<String, Void, ArrayList<NewsElements>>{
@@ -93,7 +81,7 @@ public class NewsPage extends AppCompatActivity {
         protected void onPostExecute(ArrayList<NewsElements> newsElementses) {
             super.onPostExecute(newsElementses);
             progressDialog.dismiss();
-            elementsAdapter = new ElementsAdapter(NewsPage.this, R.layout.item_news, newsElementsArrayList );
+            elementsAdapter = new ElementsAdapter(NewsPage.this, R.layout.item_news, newsElementsArrayList);
             lvNews.setAdapter(elementsAdapter);
 
         }
@@ -159,7 +147,7 @@ public class NewsPage extends AppCompatActivity {
         }
     }
 
-    public InputStream getInputStream(URL url) {
+    public static InputStream getInputStream(URL url) {
 
         try {
             return url.openConnection().getInputStream();
