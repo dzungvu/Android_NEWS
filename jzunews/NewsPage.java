@@ -3,13 +3,20 @@ package com.software.dzungvu.jzunews;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import com.software.dzungvu.adapter.ElementsAdapter;
 import com.software.dzungvu.configuration.Configuration;
@@ -27,16 +34,22 @@ import java.util.ArrayList;
 
 public class NewsPage extends AppCompatActivity {
 
-    ListView lvNews;
-    NewsElements elements;
-    ArrayList<NewsElements>newsElementsArrayList;
-    ElementsAdapter elementsAdapter;
+    private ListView lvNews;
+    private NewsElements elements;
+    private ArrayList<NewsElements>newsElementsArrayList;
+    private ElementsAdapter elementsAdapter;
+    private LinearLayout llNews;
+    private Toolbar toolbar;
+
+
+
 
     ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_page);
+        this.setTitle("News Page");
 
         addControls();
         addEvents();
@@ -45,8 +58,12 @@ public class NewsPage extends AppCompatActivity {
 
     private void addControls() {
         lvNews = (ListView) findViewById(R.id.lvNews);
+        llNews = (LinearLayout) findViewById(R.id.llNews);
         newsElementsArrayList = new ArrayList<>();
         progressDialog = new ProgressDialog(this);
+        toolbar = (Toolbar) findViewById(R.id.newsToolBar);
+        setSupportActionBar(toolbar);
+
 
 
         String link = Configuration.RSS_LINK + Configuration.NEWS_LINK;
@@ -57,16 +74,34 @@ public class NewsPage extends AppCompatActivity {
         lvNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(newsElementsArrayList.get(position).getLink()));
-                startActivity(browserIntent);
+                Intent intent = new Intent(NewsPage.this, WebViewContent.class);
+                intent.putExtra("URLNEWS", newsElementsArrayList.get(position).getLink());
+                startActivity(intent);
             }
         });
 
+
+        lvNews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                startActivity(new Intent(NewsPage.this, PopupActivity.class));
+
+                return true;
+            }
+        });
+
+
+
+
+
     }
+
 
     private void addEvents() {
 
+
     }
+
 
     public class GetRssFile extends AsyncTask<String, Void, ArrayList<NewsElements>>{
         @Override
@@ -156,6 +191,30 @@ public class NewsPage extends AppCompatActivity {
             return null;
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.list_news_menu_action_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.mnuBack:
+                this.finish();
+                return true;
+            case R.id.mnu_news_grid_view:
+                Toast.makeText(this, "Grid view", Toast.LENGTH_LONG).show();
+                return true;
+            case R.id.mnu_news_list_view:
+                Toast.makeText(this, "List view", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return onOptionsItemSelected(item);
+        }
     }
 
 

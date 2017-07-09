@@ -16,7 +16,7 @@ import java.util.zip.Inflater;
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
-    LinearLayout llNews, llWorld, llBussiness, llEntertaiment, llSport;
+    LinearLayout llNews, llWorld, llBussiness, llEntertaiment, llSport, llMore;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         llBussiness = (LinearLayout) findViewById(R.id.llBussiness);
         llEntertaiment = (LinearLayout) findViewById(R.id.llEntertaiment);
         llSport = (LinearLayout) findViewById(R.id.llSport);
+        llMore = (LinearLayout) findViewById(R.id.llMore);
 
     }
 
@@ -73,6 +74,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        llMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotoMorePage();
+            }
+        });
+
     }
 
     private void gotoNewsPage() {
@@ -103,12 +111,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void gotoSportPage() {
 
         Intent intent = new Intent(this, SportPage.class);
         startActivity(intent);
 
+    }
+
+    private void gotoMorePage () {
+        Intent intent = new Intent(this, MorePage.class);
+        startActivity(intent);
     }
 
 

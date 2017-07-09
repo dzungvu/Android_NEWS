@@ -56,8 +56,9 @@ public class BussinessPage extends AppCompatActivity {
         lvNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(newsElementsArrayList.get(position).getLink()));
-                startActivity(browserIntent);
+                Intent intent = new Intent(BussinessPage.this, WebViewContent.class);
+                intent.putExtra("URLNEWS", newsElementsArrayList.get(position).getLink());
+                startActivity(intent);
             }
         });
 
