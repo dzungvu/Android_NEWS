@@ -2,8 +2,6 @@ package com.software.dzungvu.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,21 +20,22 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 /**
- * Created by DzungVu on 7/8/2017.
+ * Created by DzungVu on 7/10/2017.
  */
 
-public class ElementsAdapter extends ArrayAdapter<NewsElements> {
+public class ElementsGridAdapter extends ArrayAdapter<NewsElements> {
 
     Activity context;
     int resource;
     List<NewsElements> objects;
 
-    public ElementsAdapter(@NonNull Activity context, @LayoutRes int resource, @NonNull List<NewsElements> objects) {
+    public ElementsGridAdapter(@NonNull Activity context, @LayoutRes int resource, @NonNull List<NewsElements> objects) {
         super(context, resource, objects);
         this.context = context;
         this.resource = resource;
         this.objects = objects;
     }
+
 
     @NonNull
     @Override
@@ -44,10 +43,10 @@ public class ElementsAdapter extends ArrayAdapter<NewsElements> {
         LayoutInflater inflater = this.context.getLayoutInflater();
         View v = inflater.inflate(this.resource, null);
 
-        ImageView imgNews = (ImageView) v.findViewById(R.id.imgNews);
-        TextView txtTitle = (TextView) v.findViewById(R.id.txtTitle);
-        TextView txtPubDate = (TextView) v.findViewById(R.id.txtPubDate);
-        LinearLayout llItem = (LinearLayout) v.findViewById(R.id.llItem);
+        ImageView imgGridNews = (ImageView) v.findViewById(R.id.imgGridNews);
+        TextView txtTitle = (TextView) v.findViewById(R.id.txtGridTitle);
+        TextView txtPubDate = (TextView) v.findViewById(R.id.txtGridPubDate);
+        LinearLayout llItem = (LinearLayout) v.findViewById(R.id.llGridItem);
 
         final NewsElements newsElements = this.objects.get(position);
         txtTitle.setText(newsElements.getTitle());
@@ -56,7 +55,7 @@ public class ElementsAdapter extends ArrayAdapter<NewsElements> {
         imgLink = newsElements.getDescription();
         if (imgLink.contains("src=")){
             imgLink = imgLink.substring(imgLink.indexOf("src=")+5, imgLink.indexOf("\" ></a>"));
-            Picasso.with(context).load(imgLink).into(imgNews);
+            Picasso.with(context).load(imgLink).into(imgGridNews);
         }
 
 
@@ -64,5 +63,4 @@ public class ElementsAdapter extends ArrayAdapter<NewsElements> {
 
 
     }
-
 }

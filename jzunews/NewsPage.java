@@ -2,7 +2,10 @@ package com.software.dzungvu.jzunews;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,12 +16,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.software.dzungvu.adapter.ElementsAdapter;
+import com.software.dzungvu.adapter.ElementsGridAdapter;
 import com.software.dzungvu.configuration.Configuration;
 import com.software.dzungvu.model.NewsElements;
 
@@ -35,9 +40,11 @@ import java.util.ArrayList;
 public class NewsPage extends AppCompatActivity {
 
     private ListView lvNews;
+    GridView gvNews;
     private NewsElements elements;
     private ArrayList<NewsElements>newsElementsArrayList;
     private ElementsAdapter elementsAdapter;
+    private ElementsGridAdapter elementsGridAdapter;
     private LinearLayout llNews;
     private Toolbar toolbar;
 
@@ -58,6 +65,7 @@ public class NewsPage extends AppCompatActivity {
 
     private void addControls() {
         lvNews = (ListView) findViewById(R.id.lvNews);
+        gvNews = (GridView) findViewById(R.id.gvNews);
         llNews = (LinearLayout) findViewById(R.id.llNews);
         newsElementsArrayList = new ArrayList<>();
         progressDialog = new ProgressDialog(this);
@@ -67,8 +75,13 @@ public class NewsPage extends AppCompatActivity {
 
 
         String link = Configuration.RSS_LINK + Configuration.NEWS_LINK;
-        GetRssFile task =  new GetRssFile();
-        task.execute(link);
+        if (haveNetworkConnection() == true){
+            GetRssFile task =  new GetRssFile();
+            task.execute(link);
+        }else{
+            Toast.makeText(this, "No internet", Toast.LENGTH_LONG).show();
+        }
+
 
 
         lvNews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -84,7 +97,16 @@ public class NewsPage extends AppCompatActivity {
         lvNews.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(NewsPage.this, PopupActivity.class));
+                Bundle bundle = new Bundle();
+                bundle.putString("LINK", newsElementsArrayList.get(position).getLink());
+                bundle.putString("DESCRIPTION", newsElementsArrayList.get(position).getDescription());
+                bundle.putString("PUBDATE", newsElementsArrayList.get(position).getPubDate());
+                bundle.putString("TITLE", newsElementsArrayList.get(position).getTitle());
+                bundle.putString("GUID", newsElementsArrayList.get(position).getGuid());
+                Intent intent = new Intent(NewsPage.this, PopupActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+
 
                 return true;
             }
@@ -118,6 +140,8 @@ public class NewsPage extends AppCompatActivity {
             progressDialog.dismiss();
             elementsAdapter = new ElementsAdapter(NewsPage.this, R.layout.item_news, newsElementsArrayList);
             lvNews.setAdapter(elementsAdapter);
+            elementsGridAdapter = new ElementsGridAdapter(NewsPage.this, R.layout.item_news_grid, newsElementsArrayList);
+            gvNews.setAdapter(elementsGridAdapter);
 
         }
 
@@ -208,13 +232,32 @@ public class NewsPage extends AppCompatActivity {
                 return true;
             case R.id.mnu_news_grid_view:
                 Toast.makeText(this, "Grid view", Toast.LENGTH_LONG).show();
+                lvNews.setVisibility(View.GONE);
+                gvNews.setVisibility(View.VISIBLE);
                 return true;
             case R.id.mnu_news_list_view:
                 Toast.makeText(this, "List view", Toast.LENGTH_LONG).show();
+                lvNews.setVisibility(View.VISIBLE);
+                gvNews.setVisibility(View.GONE);
                 return true;
             default:
                 return onOptionsItemSelected(item);
         }
+    }
+
+    private boolean haveNetworkConnection(){
+        boolean haveWifiConnection = false;
+        boolean haveMobileConnection = false;
+
+        ConnectivityManager cm = (ConnectivityManager) NewsPage.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo){
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                haveWifiConnection = ni.isConnected();
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                haveMobileConnection = ni.isConnected();
+        }
+        return haveMobileConnection||haveWifiConnection;
     }
 
 
