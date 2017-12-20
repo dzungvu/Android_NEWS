@@ -1,0 +1,1 @@
+Smart Buddy mobile application
